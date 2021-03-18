@@ -29,11 +29,6 @@ void draw_scene(const Scene* scene);
 void draw_origin();
 
 /**
- * Draw a cone. Not working.
- */
-//void draw_cone();
-
-/**
  * Draw a triangle.
  */
 void draw_triangle();

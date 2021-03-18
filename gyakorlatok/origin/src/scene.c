@@ -77,33 +77,6 @@ void draw_origin()
     glEnd();
 }
 
-/*
-void draw_cone()
-{
-	float x, y, h;
-	float phi;
-	float delta;
-	
-	glColor3f(1, 0.6, 0.6);
-	glBegin(GL_TRIANGULAR_FAN);
-	
-	h = 1;
-	delta = 0.1;
-	glVertex3f(0, 0, h);
-	phi = 0.0;
-	while (phi <= 2 * M_PI + delta) {
-		x = cos(phi);
-		y = sin(phi);
-		value = phi / 2;
-		glColor3f(phi, 0, 0);
-		glVertex3f(x, y, 0);
-		phi += delta;
-	}
-
-    glEnd();
-}
-*/
-
 void draw_triangle()
 {
 	glBegin(GL_TRIANGLES);
