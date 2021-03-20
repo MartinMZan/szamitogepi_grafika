@@ -87,6 +87,12 @@ void keyboard(unsigned char key, int x, int y)
             is_preview_visible = TRUE;
         }
         break;
+	case 'u':
+		update_lightning(&scene, 0.05);
+		break;
+	case 'j':
+		update_lightning(&scene, -0.05);
+		break;
     }
 
     glutPostRedisplay();
@@ -118,6 +124,7 @@ void idle()
     elapsed_time = (double)(current_time - last_frame_time) / 1000;
     last_frame_time = current_time;
 
+	update_scene(&scene, elapsed_time);
     update_camera(&camera, elapsed_time);
 
     glutPostRedisplay();

@@ -5,6 +5,8 @@
 #include <obj/load.h>
 #include <obj/draw.h>
 
+#include <math.h>
+
 void init_scene(Scene* scene)
 {
     load_model(&(scene->cube), "cube.obj");
@@ -12,6 +14,18 @@ void init_scene(Scene* scene)
 	
 	load_model(&(scene->house), "house.obj");
     scene->texture_id = load_texture("house.png"); 
+	
+	scene->ambient_light[0] = 0.2f;
+	scene->ambient_light[1] = 0.2f;
+	scene->ambient_light[2] = 0.2f;
+	scene->ambient_light[3] = 0.2f;
+	
+	scene->diffuse_light[0] = 0.0f;
+	scene->diffuse_light[1] = 0.0f;
+	scene->diffuse_light[2] = 0.0f;
+	scene->diffuse_light[3] = 0.0f;
+	
+	scene->light_mult = 1;
 	
     glBindTexture(GL_TEXTURE_2D, scene->texture_id);
 
@@ -28,17 +42,18 @@ void init_scene(Scene* scene)
     scene->material.specular.blue = 1.0;
 
     scene->material.shininess = 30.0;
+	
+	scene->cube_rotation = 0;
+	scene->house_rotation = 0;
 }
 
-void set_lighting()
+void set_lighting(const Scene* scene)
 {
-    float ambient_light[] = { 0.1f, 0.1f, 0.1f, 0.1f };
-    float diffuse_light[] = { 0.5f, 0.5f, 0.5f, 0.5f };
     float specular_light[] = { 1.0f, 1.0f, 1.0f, 1.0f };
     float position[] = { 5.0f, 2.0f, 2.0f, 1.0f };
 
-    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_light);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse_light);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, scene->ambient_light);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, scene->diffuse_light);
     glLightfv(GL_LIGHT0, GL_SPECULAR, specular_light);
     glLightfv(GL_LIGHT0, GL_POSITION, position);
 }
@@ -75,7 +90,7 @@ void draw_scene(const Scene* scene)
 	int i;
 	
     set_material(&(scene->material));
-    set_lighting();
+    set_lighting(scene);
     draw_origin();
     
 	for (i=0; i<10; ++i)
@@ -87,8 +102,8 @@ void draw_scene(const Scene* scene)
 	glPopMatrix();
 	
 	glPushMatrix();
-	
 	glTranslatef(5.0f, 2.0f, 2.0f);
+	glRotatef(scene->cube_rotation, 1, 0, 0);
 	draw_model(&(scene->cube));
 	glPopMatrix();
 	
@@ -96,6 +111,7 @@ void draw_scene(const Scene* scene)
 	glTranslatef(0.0f, -3.0f, 0.2f);
 	glScalef(0.02f, 0.02f, 0.02f);
 	glRotatef(90, 1.0f, 0.0f, 0.0f);
+	glRotatef(scene->house_rotation, 0, 0, 1);
 	draw_model(&(scene->house));
 	glPopMatrix();
 }
@@ -117,4 +133,41 @@ void draw_origin()
     glVertex3f(0, 0, 1);
 
     glEnd();
+}
+
+void update_scene(Scene* scene, double time)
+{
+	scene->cube_rotation += 10*time;
+	scene->house_rotation += 20*time;
+	
+	if(scene->diffuse_light[0] > 1 || scene->diffuse_light[0] < 0) 
+		scene->light_mult *= -1.0;
+	scene->diffuse_light[0] += 0.1*time*scene->light_mult;
+	scene->diffuse_light[1] += 0.2*time*scene->light_mult;
+	scene->diffuse_light[2] += 0.3*time*scene->light_mult;
+	scene->diffuse_light[3] += 0.4*time*scene->light_mult;
+	
+	
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, scene->diffuse_light);
+}
+
+void update_lightning(Scene* scene, float amount)
+{
+	if(amount > 0 && scene->ambient_light[0] < 1)
+	{
+		scene->ambient_light[0] += amount;
+		scene->ambient_light[1] += amount;
+		scene->ambient_light[2] += amount;
+		scene->ambient_light[3] += amount;
+	}
+	
+	if(amount < 0 && scene->ambient_light[0] > 0)
+	{
+		scene->ambient_light[0] += amount;
+		scene->ambient_light[1] += amount;
+		scene->ambient_light[2] += amount;
+		scene->ambient_light[3] += amount;
+	}
+	
+	glLightfv(GL_LIGHT0, GL_AMBIENT, scene->ambient_light);
 }
