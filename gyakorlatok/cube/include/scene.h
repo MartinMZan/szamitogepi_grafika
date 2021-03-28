@@ -14,6 +14,7 @@ typedef struct Scene
 	float house_rotation;
     Material material;
     GLuint texture_id;
+	GLuint texture_id2;
 	float ambient_light[4];
 	float diffuse_light[4];
 	float light_mult;

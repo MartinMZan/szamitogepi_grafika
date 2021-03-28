@@ -13,7 +13,7 @@ void init_scene(Scene* scene)
     scene->texture_id = load_texture("cube.png"); 
 	
 	load_model(&(scene->house), "house.obj");
-    scene->texture_id = load_texture("house.png"); 
+    scene->texture_id2 = load_texture("house.png"); 
 	
 	scene->ambient_light[0] = 0.2f;
 	scene->ambient_light[1] = 0.2f;
@@ -26,8 +26,6 @@ void init_scene(Scene* scene)
 	scene->diffuse_light[3] = 0.0f;
 	
 	scene->light_mult = 1;
-	
-    glBindTexture(GL_TEXTURE_2D, scene->texture_id);
 
     scene->material.ambient.red = 0.5;
     scene->material.ambient.green = 0.5;
@@ -101,12 +99,14 @@ void draw_scene(const Scene* scene)
 	}
 	glPopMatrix();
 	
+	glBindTexture(GL_TEXTURE_2D, scene->texture_id);
 	glPushMatrix();
 	glTranslatef(5.0f, 2.0f, 2.0f);
 	glRotatef(scene->cube_rotation, 1, 0, 0);
 	draw_model(&(scene->cube));
 	glPopMatrix();
 	
+	glBindTexture(GL_TEXTURE_2D, scene->texture_id2);
 	glPushMatrix();
 	glTranslatef(0.0f, -3.0f, 0.2f);
 	glScalef(0.02f, 0.02f, 0.02f);
