@@ -12,10 +12,6 @@ GLuint load_texture(char* filename)
     GLuint texture_name;
     glGenTextures(1, &texture_name);
 
-    
-
-    
-
     glBindTexture(GL_TEXTURE_2D, texture_name);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, (Pixel*)image);
 

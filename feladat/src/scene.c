@@ -7,11 +7,11 @@
 
 void init_scene(Scene* scene)
 {
-    load_model(&(scene->cube), "cube.obj");
-    scene->texture_id = load_texture("cube.jpg"); 
-
-    glBindTexture(GL_TEXTURE_2D, scene->texture_id);
-
+    load_model(&(scene->models[0]), "data/cube.obj");
+	load_model(&(scene->models[1]), "data/trampoline.obj");
+    scene->texture_id[0] = load_texture("data/cube.jpg"); 
+	scene->texture_id[1] = load_texture("data/trampoline.png"); 
+	
     scene->material.ambient.red = 0.2;
     scene->material.ambient.green = 0.2;
     scene->material.ambient.blue = 0.2;
@@ -51,9 +51,9 @@ void set_lighting(const Scene* scene)
 	specular_light[2] = 0.8f;
 	specular_light[3] = 1.0f;
 	
-	position[0] = 0.0f;
-	position[1] = 0.0f;
-	position[2] = 10.0f;
+	position[0] = -4.5f;
+	position[1] = -4.5f;
+	position[2] = 7.0f;
 	position[3] = 1.0f;
 
     glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_light);
@@ -105,7 +105,16 @@ void draw_scene(const Scene* scene)
     set_lighting(scene);
     
 	draw_map(scene);
-    
+	draw_bounding_box_example(scene);
+	
+	//glDisable(GL_CULL_FACE);
+	glBindTexture(GL_TEXTURE_2D, scene->texture_id[1]);
+	glPushMatrix();
+	glTranslatef(-3, 2, 0);
+	glRotatef(90, 1, 0, 0);
+	glScalef(0.1, 0.01, 0.01);
+	draw_model(&scene->models[1]);
+	glPopMatrix();
 }
 
 void draw_origin()
@@ -127,20 +136,65 @@ void draw_origin()
     glEnd();
 }
 
-void draw_map(const Scene* scene)
+void draw_more(Model model, int startpoint, int endpoint, int centerx, int centery)
 {
 	int i, j;
-	int startpoint = -5;
-	int endpoint = 5;
-	
+
 	for (i=startpoint; i <= endpoint; i++)
 	{
 		for (j=startpoint; j <= endpoint; j++)
 		{
 			glPushMatrix();
-			glTranslatef(i, j, -0.5);
-			draw_model(&(scene->cube));
+			glTranslatef(centerx+i, centery+j, -0.5);
+			draw_model(&model);
 			glPopMatrix();
 		}
 	}
+}
+
+void draw_map(const Scene* scene)
+{
+	glBindTexture(GL_TEXTURE_2D, scene->texture_id[0]);
+	draw_more(scene->models[0], -5, 5, 0, 0);
+	
+	glPushMatrix();
+	glTranslatef(0, 0, 10);
+	draw_more(scene->models[0], -5, 5, 0, 0);
+	glPopMatrix();
+	
+	glPushMatrix();
+	glRotatef(90, 1, 0, 0);
+	glTranslatef(0, 4.5, -5);
+	draw_more(scene->models[0], -5, 5, 0, 0);
+	glPopMatrix();
+	
+	glPushMatrix();
+	glRotatef(90, 1, 0, 0);
+	glTranslatef(0, 4.5, 6);
+	draw_more(scene->models[0], -5, 5, 0, 0);
+	glPopMatrix();
+	
+	glPushMatrix();
+	glTranslatef(-5, 0, 4.5);
+	glRotatef(90, 0, 1, 0);
+	draw_more(scene->models[0], -5, 5, 0, 0);
+	glPopMatrix();
+	
+	glPushMatrix();
+	glTranslatef(6, 0, 4.5);
+	glRotatef(90, 0, 1, 0);
+	draw_more(scene->models[0], -5, 5, 0, 0);
+	glPopMatrix();
+}
+
+void draw_bounding_box_example(const Scene* scene)
+{
+	vec3 t = {3, 3, 0.5};
+	
+	glPushMatrix();
+	glTranslatef(3, 3, 0.5);
+	draw_model(&scene->models[0]);
+	glPopMatrix();
+	
+	make_cube_bounding_box(&all_bounding_box, t, 1);
 }

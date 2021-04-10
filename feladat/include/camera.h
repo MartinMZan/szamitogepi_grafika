@@ -2,6 +2,7 @@
 #define CAMERA_H
 
 #include "utils.h"
+#include "bounding_box.h"
 
 /**
  * Camera, as a moving point with direction

@@ -3,14 +3,15 @@
 
 #include "camera.h"
 #include "texture.h"
+#include "bounding_box.h"
 
 #include <obj/model.h>
 
 typedef struct Scene
 {
-    Model cube;
+    Model models[2];
     Material material;
-    GLuint texture_id;
+    GLuint texture_id[2];
 	float ambient_light;
 } Scene;
 
@@ -45,8 +46,18 @@ void draw_scene(const Scene* scene);
 void draw_origin();
 
 /**
- * Draw the map.
+ * Draw more models from the same type.
  */
- void draw_map(const Scene* scene);
+void draw_more(Model model, int startpoint, int endpoint, int centerx, int centery);
  
+/**
+ * Draw the map in the following order: bottom, up, left, right, front, back.
+ */
+void draw_map(const Scene* scene);
+ 
+ /**
+ * Draw a model to demonstrate the bounding box implementation on it.
+ */
+void draw_bounding_box_example(const Scene* scene);
+
 #endif /* SCENE_H */

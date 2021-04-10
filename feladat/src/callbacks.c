@@ -72,16 +72,16 @@ void keyboard(unsigned char key, int UNUSED(x), int UNUSED(y))
 {
     switch (key) {
     case 'w':
-        set_camera_speed(&camera, 1.5);
+        set_camera_speed(&camera, 2);
         break;
     case 's':
-        set_camera_speed(&camera, -1.5);
+        set_camera_speed(&camera, -2);
         break;
     case 'a':
-        set_camera_side_speed(&camera, 1.5);
+        set_camera_side_speed(&camera, 2);
         break;
     case 'd':
-        set_camera_side_speed(&camera, -1.5);
+        set_camera_side_speed(&camera, -2);
         break;
     case 't':
         if (is_preview_visible) {
@@ -105,8 +105,10 @@ void keyboard(unsigned char key, int UNUSED(x), int UNUSED(y))
 			users_guide_visible = TRUE;
 		}
 		break;
+	case 27:
+		exit(0);
+		break;
 	}
-	
     glutPostRedisplay();
 }
 
