@@ -139,6 +139,7 @@ void idle()
     last_frame_time = current_time;
 
     update_camera(&camera, elapsed_time);
-
+	update_bounce_ball(&ball);
+	
     glutPostRedisplay();
 }

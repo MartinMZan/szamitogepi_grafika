@@ -4,6 +4,7 @@
 #include "camera.h"
 #include "texture.h"
 #include "bounding_box.h"
+#include "bounce.h"
 
 #include <obj/model.h>
 
@@ -46,18 +47,23 @@ void draw_scene(const Scene* scene);
 void draw_origin();
 
 /**
- * Draw more models from the same type.
+ * Draw more models from the same type which is used for draw the wall.
  */
-void draw_more(Model model, int startpoint, int endpoint, int centerx, int centery);
+void draw_wall(Model model, int startpoint, int endpoint, int centerx, int centery);
  
 /**
  * Draw the map in the following order: bottom, up, left, right, front, back.
  */
 void draw_map(const Scene* scene);
  
- /**
+/**
  * Draw a model to demonstrate the bounding box implementation on it.
  */
 void draw_bounding_box_example(const Scene* scene);
+
+/**
+ * Draw a trampoline.
+ */
+void draw_trampoline(const Scene* scene);
 
 #endif /* SCENE_H */

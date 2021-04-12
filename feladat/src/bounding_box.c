@@ -116,7 +116,6 @@ int hit_bounding_box_y(All_bounding_box* all_bounding_box, vec3 camera_position)
 {
 	int hit = FALSE;
 	int i;
-	float distance = 0.05;
 	
 	for (i=0; i<sizeof(all_bounding_box->cube_bounding_box)/sizeof(all_bounding_box->cube_bounding_box[0]); i++)
 	{

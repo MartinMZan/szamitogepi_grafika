@@ -34,7 +34,7 @@ void update_camera(Camera* camera, double time)
 	
 	if (hitx)
 	{
-		camera->position.x = camera->position.x + 0.00002 * pow(-1, (double)hitx);
+		camera->position.x = camera->position.x + 0.0001 * pow(-1, (double)hitx);
 	}
 	else
 	{
@@ -45,7 +45,7 @@ void update_camera(Camera* camera, double time)
 	
 	if (hity)
 	{
-		camera->position.y = camera->position.y + 0.00002 * pow(-1, (double)hity);
+		camera->position.y = camera->position.y + 0.0001 * pow(-1, (double)hity);
 	}
 	else
 	{
