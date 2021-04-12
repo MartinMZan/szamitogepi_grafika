@@ -25,6 +25,11 @@ int is_preview_visible;
 int users_guide_visible;
 
 /**
+ * Is the ball simulation running?
+ */
+int ball_simulation;
+ 
+/**
  * Initialize the camera to the start position.
  */
 void init_camera(Camera* camera);

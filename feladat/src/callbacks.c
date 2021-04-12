@@ -83,7 +83,13 @@ void keyboard(unsigned char key, int UNUSED(x), int UNUSED(y))
     case 'd':
         set_camera_side_speed(&camera, -2);
         break;
-    case 't':
+	case '+':
+		change_lighting(&scene, 0.1);
+		break;
+	case '-':
+		change_lighting(&scene, -0.1);
+		break;
+	case 't':
         if (is_preview_visible) {
             is_preview_visible = FALSE;
         }
@@ -91,18 +97,19 @@ void keyboard(unsigned char key, int UNUSED(x), int UNUSED(y))
             is_preview_visible = TRUE;
         }
         break;
-	case '+':
-		change_lighting(&scene, 0.1);
-		break;
-	case '-':
-		change_lighting(&scene, -0.1);
-		break;
 	case 'u':
 		if  (users_guide_visible) {
 			users_guide_visible = FALSE;
 		}
 		else {
 			users_guide_visible = TRUE;
+		}
+		break;
+	case 'b':
+		if (!ball_simulation) {
+			init_ball(&ball);
+			
+			ball_simulation = TRUE;
 		}
 		break;
 	case 27:
@@ -139,7 +146,13 @@ void idle()
     last_frame_time = current_time;
 
     update_camera(&camera, elapsed_time);
-	update_bounce_ball(&ball);
+	
+	if (ball_simulation) {
+		update_bounce_ball(&ball);
+	}
+	if(get_simulation_end_time(&ball) >= 10) {
+		ball_simulation = FALSE;
+	}
 	
     glutPostRedisplay();
 }

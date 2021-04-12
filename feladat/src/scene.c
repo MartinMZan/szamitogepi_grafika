@@ -10,10 +10,14 @@ void init_scene(Scene* scene)
 {
     load_model(&(scene->models[0]), "data/cube.obj");
 	load_model(&(scene->models[1]), "data/trampoline.obj");
+	load_model(&(scene->models[2]), "data/ball.obj");
 	
     scene->texture_id[0] = load_texture("data/cube.jpg"); 
 	scene->texture_id[1] = load_texture("data/trampoline.png"); 
-
+	scene->texture_id[2] = load_texture("data/ball.jpg");
+	scene->texture_id[3] = load_texture("data/transparent.png");
+	scene->texture_id[4] = load_texture("data/paint.jpg");
+	
     scene->material.ambient.red = 0.2;
     scene->material.ambient.green = 0.2;
     scene->material.ambient.blue = 0.2;
@@ -53,8 +57,8 @@ void set_lighting(const Scene* scene)
 	specular_light[2] = 0.8f;
 	specular_light[3] = 1.0f;
 	
-	position[0] = -4.5f;
-	position[1] = -4.5f;
+	position[0] = 0.0f;
+	position[1] = 0.0f;
 	position[2] = 7.0f;
 	position[3] = 1.0f;
 
@@ -109,7 +113,9 @@ void draw_scene(const Scene* scene)
 	draw_map(scene);
 	draw_bounding_box_example(scene);
 	draw_trampoline(scene);
-	draw_bounce_example(&ball);
+	draw_bounce_example(scene);
+	draw_transparent_texture_example(scene);
+	
 }
 
 void draw_origin()
@@ -139,6 +145,25 @@ void draw_wall(Model model, int startpoint, int endpoint, int centerx, int cente
 	{
 		for (j=startpoint; j <= endpoint; j++)
 		{
+			glPushMatrix();
+			glTranslatef(centerx+i, centery+j, -0.5);
+			draw_model(&model);
+			glPopMatrix();
+		}
+	}
+}
+
+void draw_wall2(Model model, int startpoint, int endpoint, int centerx, int centery)
+{
+	int i, j;
+
+	for (i=startpoint; i <= endpoint; i++)
+	{
+		for (j=startpoint; j <= endpoint; j++)
+		{
+			if (i == -j) {
+				continue;
+			}
 			glPushMatrix();
 			glTranslatef(centerx+i, centery+j, -0.5);
 			draw_model(&model);
@@ -178,16 +203,16 @@ void draw_map(const Scene* scene)
 	glPushMatrix();
 	glTranslatef(6, 0, 4.5);
 	glRotatef(90, 0, 1, 0);
-	draw_wall(scene->models[0], -5, 5, 0, 0);
+	draw_wall2(scene->models[0], -5, 5, 0, 0);
 	glPopMatrix();
 }
 
 void draw_bounding_box_example(const Scene* scene)
 {
-	vec3 t = {3, 3, 0.5};
+	vec3 t = {-3, -3, 0.5};
 	
 	glPushMatrix();
-	glTranslatef(3, 3, 0.5);
+	glTranslatef(-3, -3, 0.5);
 	draw_model(&scene->models[0]);
 	glPopMatrix();
 	
@@ -202,4 +227,62 @@ void draw_bounding_box_example(const Scene* scene)
 	glRotatef(90, 1, 0, 0);
 	draw_model(&scene->models[1]);
 	glPopMatrix();
+ }
+ 
+ void draw_bounce_example(const Scene* scene)
+{
+	if (ball_simulation)
+	{
+		glBindTexture(GL_TEXTURE_2D, scene->texture_id[2]);
+		glPushMatrix();
+		glTranslatef(-3.25, 3.5, get_ball_position(&ball));
+		glScalef(2,2,2);
+		draw_model(&scene->models[2]);
+		glPopMatrix();
+	}
+	else
+	{
+		glBindTexture(GL_TEXTURE_2D, scene->texture_id[2]);
+		glPushMatrix();
+		glTranslatef(-3.25, 3.5, 6);
+		glScalef(2,2,2);
+		draw_model(&scene->models[2]);
+		glPopMatrix();
+	}
+ }
+ 
+ void draw_transparent_texture_example(const Scene* scene)
+ {
+	int i=-5;
+	int j=5;
+	
+	glBindTexture(GL_TEXTURE_2D, scene->texture_id[4]);
+	glPushMatrix();
+	glTranslatef(20, 0, 4.5);
+	glScalef(1, 20, 20);
+	glRotatef(90, 0, 1, 0);
+	draw_model(&scene->models[0]);
+	glPopMatrix();
+	
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+	glBindTexture(GL_TEXTURE_2D, scene->texture_id[3]);
+	glPushMatrix();
+	glTranslatef(6, 0, 4.5);
+	glRotatef(90, 0, 1, 0);
+	for (i=-5; i <= 5; i++)
+	{
+		for (j=-5; j <= 5; j++)
+		{
+			if (i != -j) {
+				continue;
+			}
+			glPushMatrix();
+			glTranslatef(0+i, 0+j, -0.5);
+			draw_model(&scene->models[0]);
+			glPopMatrix();
+		}
+	}
+	glPopMatrix();
+	glDisable(GL_BLEND);
  }

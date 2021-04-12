@@ -5,7 +5,7 @@ void init_all_bounding_box(All_bounding_box* all_bounding_box)
 	int i;
 	all_bounding_box->distance = 0.05f;
 	
-	for (i=0; i<sizeof(all_bounding_box)/sizeof(all_bounding_box[0]); i++)
+	for (i=0; i<(int)(sizeof(all_bounding_box)/sizeof(all_bounding_box[0])); i++)
 	{
 		all_bounding_box->cube_bounding_box[i].left_bottom_front.x = 0;
 		all_bounding_box->cube_bounding_box[i].left_bottom_front.y = 0;
@@ -45,7 +45,7 @@ void make_cube_bounding_box(All_bounding_box* all_bounding_box, vec3 center, flo
 {
 	int i;
 	
-	for (i=0; i<sizeof(all_bounding_box)/sizeof(all_bounding_box[0]); i++)
+	for (i=0; i<(int)(sizeof(all_bounding_box)/sizeof(all_bounding_box[0])); i++)
 	{
 		if(all_bounding_box->cube_bounding_box[i].left_bottom_front.x == 0.0f)
 		{
@@ -91,7 +91,7 @@ int hit_bounding_box_x(All_bounding_box* all_bounding_box, vec3 camera_position)
 	int hit = FALSE;
 	int i;
 	
-	for (i=0; i<sizeof(all_bounding_box->cube_bounding_box)/sizeof(all_bounding_box->cube_bounding_box[0]); i++)
+	for (i=0; i<(int)(sizeof(all_bounding_box->cube_bounding_box)/sizeof(all_bounding_box->cube_bounding_box[0])); i++)
 	{
 		if (all_bounding_box->cube_bounding_box[i].left_bottom_front.x - camera_position.x < all_bounding_box->distance &&
 		all_bounding_box->cube_bounding_box[i].left_bottom_front.x - camera_position.x > 0 &&
@@ -117,7 +117,7 @@ int hit_bounding_box_y(All_bounding_box* all_bounding_box, vec3 camera_position)
 	int hit = FALSE;
 	int i;
 	
-	for (i=0; i<sizeof(all_bounding_box->cube_bounding_box)/sizeof(all_bounding_box->cube_bounding_box[0]); i++)
+	for (i=0; i<(int)(sizeof(all_bounding_box->cube_bounding_box)/sizeof(all_bounding_box->cube_bounding_box[0])); i++)
 	{
 		if (all_bounding_box->cube_bounding_box[i].left_bottom_front.x <= camera_position.x &&
 		all_bounding_box->cube_bounding_box[i].left_bottom_back.x >= camera_position.x &&

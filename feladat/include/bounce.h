@@ -3,16 +3,13 @@
 
 #include <obj/model.h>
 
-#include "scene.h"
-
 typedef struct Ball
 {
 	float position;
 	int direction;
 	float speed;
 	float last_bounce_time;
-	Model model;
-	GLuint texture_id;
+	int simulation_end_time;
 } Ball;
 
 Ball ball;
@@ -23,13 +20,14 @@ Ball ball;
 void init_ball(Ball* ball);
 
 /**
+ * Getter functions.
+ */
+float get_ball_position(Ball* ball);
+int get_simulation_end_time(Ball* ball);
+
+/**
  * Update the current values of bounce mechanism.
  */
 void update_bounce_ball(Ball* ball);
-
-/**
- * Draw ball to demonstrate the bounce physics implementation.
- */
-void draw_bounce_example(const Ball* ball);
 
 #endif /* BOUNCE.H */

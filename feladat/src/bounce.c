@@ -3,52 +3,60 @@
 
 void init_ball(Ball* ball)
 {
-	ball->position = 5.5f;
+	ball->position = 6.0f;
 	ball->direction = -1;
 	ball->speed = 0.0f;
-	ball->last_bounce_time = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
-	
-	load_model(&(ball->model), "data/ball.obj");
-	ball->texture_id = load_texture("data/ball.jpg");
+	ball->last_bounce_time = glutGet(GLUT_ELAPSED_TIME) / 1000;
+	ball->simulation_end_time = 0;
+}
+
+float get_ball_position(Ball* ball)
+{
+	return ball->position;
+}
+
+int get_simulation_end_time(Ball* ball)
+{
+	return ball->simulation_end_time;
 }
 
 void update_bounce_ball(Ball* ball)
 {
 	static float floor = 0.5f;
 	static float energy_loss_factor = 0.8f;
-	float speed_constant = 0.05f;
+	float speed_constant = 0.07f;
 	float elapsed_time = glutGet(GLUT_ELAPSED_TIME) / 1000.0 - ball->last_bounce_time;
 	
-	if (ball->position >= floor && ball->direction == -1)
+	if (ball->position > floor && ball->direction == -1)
 	{
 		ball->speed = elapsed_time * speed_constant;
 		ball->position = ball->position - ball->speed;
 	}
 	else if (ball->position >= floor && ball->direction == 1)
 	{
-		if (ball->speed - elapsed_time * speed_constant / energy_loss_factor <= 0)
-		{
+		if (ball->speed - elapsed_time * speed_constant / energy_loss_factor <= 0) {
 			ball->direction *= -1;
 			ball->last_bounce_time = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
 		}
-		ball->position = ball->position + ball->speed - elapsed_time * speed_constant / energy_loss_factor;
+		else {
+			ball->position = ball->position + ball->speed - elapsed_time * speed_constant;
+		}
 	}
-	else if (ball->position < floor)
+	else if (ball->position <= floor)
 	{
+		if (ball->speed <= 0.0005) {
+			ball->speed = 0;
+		}
+		
 		ball->direction *= -1;
 		ball->position = 0.5;
-		
+		ball->speed *= energy_loss_factor;
 		ball->last_bounce_time = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
 	}
 	
+	if (ball->speed == 0)
+	{
+		ball->simulation_end_time = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
+	}
+	
 }
-
-void draw_bounce_example(const Ball* ball)
-{
-	glBindTexture(GL_TEXTURE_2D, ball->texture_id);
-	glPushMatrix();
-	glTranslatef(-3.25, 3.5, ball->position);
-	glScalef(2,2,2);
-	draw_model(&ball->model);
-	glPopMatrix();
- }

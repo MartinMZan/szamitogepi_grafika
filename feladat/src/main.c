@@ -37,9 +37,11 @@ int main(int argc, char* argv[])
     init_opengl();
     init_scene(&scene);
     init_camera(&camera);
+	
+    set_callbacks();
+	
 	init_all_bounding_box(&all_bounding_box);
 	init_ball(&ball);
-    set_callbacks();
 	
     glutMainLoop();
 

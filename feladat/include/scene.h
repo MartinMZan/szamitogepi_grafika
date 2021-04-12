@@ -10,9 +10,9 @@
 
 typedef struct Scene
 {
-    Model models[2];
+    Model models[3];
     Material material;
-    GLuint texture_id[2];
+    GLuint texture_id[5];
 	float ambient_light;
 } Scene;
 
@@ -50,6 +50,11 @@ void draw_origin();
  * Draw more models from the same type which is used for draw the wall.
  */
 void draw_wall(Model model, int startpoint, int endpoint, int centerx, int centery);
+
+/**
+ * Other type of wall.
+ */
+void draw_wall2(Model model, int startpoint, int endpoint, int centerx, int centery);
  
 /**
  * Draw the map in the following order: bottom, up, left, right, front, back.
@@ -65,5 +70,10 @@ void draw_bounding_box_example(const Scene* scene);
  * Draw a trampoline.
  */
 void draw_trampoline(const Scene* scene);
+
+/**
+ * Draw ball to demonstrate the bounce physics implementation.
+ */
+void draw_bounce_example(const Scene* scene);
 
 #endif /* SCENE_H */

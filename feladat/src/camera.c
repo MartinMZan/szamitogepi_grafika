@@ -18,8 +18,9 @@ void init_camera(Camera* camera)
     camera->speed.y = 0.0;
     camera->speed.z = 0.0;
 
-    is_preview_visible = FALSE;
+    is_preview_visible 	= FALSE;
 	users_guide_visible = FALSE;
+	ball_simulation 	= FALSE;
 }
 
 void update_camera(Camera* camera, double time)
