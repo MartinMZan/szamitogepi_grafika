@@ -44,3 +44,19 @@ A játékos hogyha odasétál a földből kiálló kockához azt tapasztalhatja,
 Külön struktúrákat hoztam létre a jobban átláthatóság és a kezelhetőség végett.
 Célszerűnek találtam kiszámolni a kocka összes pontját.
 A dolog általam legnehezebbnek része az ütközés detektálása volt, a feltételeket átlátni utólag is kissé kusza.
+
+Használati útmutató:
+	Billentyűk:
+	W 	- előre sétálás
+	S 	- hátra sétálás
+	A	- balra sétálás
+	D	- jobbra sétálás
+	+	- fényerő fel
+	-	- fényerő le
+	t	- textúra előnézet
+	u	- felhasználói útmutató
+	b	- labda szimuláció indítása
+	ESC	- kilépés
+
+	Egér:
+Bármelyik egérgomb lenyomása után az egeret húzva lehet körbenézni.
