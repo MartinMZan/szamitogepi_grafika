@@ -7,11 +7,17 @@ Féléves feladatom különböző OpenGL-hez kötődő és nem kötődő funkci�
 A minimális elvárások közül teljesíti:
 
 -Kamerakezelés: alapból benne volt a Cube példában
+
 -Objektumok: több modellt is használ, melyet külön fájlokból be lehet tölteni
+
 -Animáció, mozgatás: a benne lévő labda modell "mozgatható" (később kifejtem), illetve fényerő állítható
+
 -Textúrák: minden modell kapott textúrát, a szükségesnél talán több félét is használtam
+
 -Fények: állíthatóak a leírásnak megfelelően, + és - gombokkal
+
 -Használati útmutató: implementálva, U (User's guide) gomb lenyomására jelenik meg
+
 -Strukturáltság, könnyen kezelés: A 3 többlet funkcióból 2-nek saját header és c állományokathoztam létre a strukturáltság érdekében, próbáltam sokat mondó változóneveket adni, illetve a gombokat és a hozzátartozó funkciókat beszédesen próbáltam kiosztani.
 
 A többlet funkciók közül teljesíti:
