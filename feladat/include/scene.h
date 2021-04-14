@@ -76,4 +76,8 @@ void draw_trampoline(const Scene* scene);
  */
 void draw_bounce_example(const Scene* scene);
 
+/**
+ * Draw an example of models with transparent textures.
+ */
+void draw_transparent_texture_example(const Scene* scene);
 #endif /* SCENE_H */

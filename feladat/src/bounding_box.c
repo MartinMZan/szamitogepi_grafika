@@ -99,6 +99,7 @@ int hit_bounding_box_x(All_bounding_box* all_bounding_box, vec3 camera_position)
 		all_bounding_box->cube_bounding_box[i].right_bottom_front.y <= camera_position.y)
 		{
 			hit = 1;
+			break;
 		}
 		if (all_bounding_box->cube_bounding_box[i].left_bottom_back.x - camera_position.x > all_bounding_box->distance * -1 &&
 		all_bounding_box->cube_bounding_box[i].left_bottom_back.x - camera_position.x < 0 &&
@@ -106,6 +107,7 @@ int hit_bounding_box_x(All_bounding_box* all_bounding_box, vec3 camera_position)
 		all_bounding_box->cube_bounding_box[i].right_bottom_front.y <= camera_position.y)
 		{
 			hit = 2;
+			break;
 		}
 	}
 	
@@ -125,6 +127,7 @@ int hit_bounding_box_y(All_bounding_box* all_bounding_box, vec3 camera_position)
 		all_bounding_box->cube_bounding_box[i].right_bottom_front.y - camera_position.y > 0)
 		{
 			hit = 1;
+			break;
 		}
 		if (all_bounding_box->cube_bounding_box[i].left_bottom_front.x <= camera_position.x &&
 		all_bounding_box->cube_bounding_box[i].left_bottom_back.x >= camera_position.x &&
@@ -132,6 +135,7 @@ int hit_bounding_box_y(All_bounding_box* all_bounding_box, vec3 camera_position)
 		all_bounding_box->cube_bounding_box[i].left_bottom_front.y - camera_position.y < 0)
 		{
 			hit = 2;
+			break;
 		}
 	}
 	

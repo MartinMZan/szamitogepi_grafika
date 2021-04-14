@@ -8,15 +8,15 @@
 
 void init_scene(Scene* scene)
 {
-    load_model(&(scene->models[0]), "data/cube.obj");
-	load_model(&(scene->models[1]), "data/trampoline.obj");
-	load_model(&(scene->models[2]), "data/ball.obj");
+    load_model(&(scene->models[0]), "data/models/cube.obj");
+	load_model(&(scene->models[1]), "data/models/trampoline.obj");
+	load_model(&(scene->models[2]), "data/models/ball.obj");
 	
-    scene->texture_id[0] = load_texture("data/cube.jpg"); 
-	scene->texture_id[1] = load_texture("data/trampoline.png"); 
-	scene->texture_id[2] = load_texture("data/ball.jpg");
-	scene->texture_id[3] = load_texture("data/transparent.png");
-	scene->texture_id[4] = load_texture("data/paint.jpg");
+    scene->texture_id[0] = load_texture("data/textures/cube.jpg"); 
+	scene->texture_id[1] = load_texture("data/textures/trampoline.png"); 
+	scene->texture_id[2] = load_texture("data/textures/ball.jpg");
+	scene->texture_id[3] = load_texture("data/textures/transparent.png");
+	scene->texture_id[4] = load_texture("data/textures/paint.jpg");
 	
     scene->material.ambient.red = 0.2;
     scene->material.ambient.green = 0.2;
@@ -217,9 +217,28 @@ void draw_bounding_box_example(const Scene* scene)
 	glPopMatrix();
 	
 	make_cube_bounding_box(&all_bounding_box, t, 1);
+	/*
+	vec3 s = {-2, -2, 0.5};
+	
+	glPushMatrix();
+	glTranslatef(-2, -2, 0.5);
+	draw_model(&scene->models[0]);
+	glPopMatrix();
+	
+	make_cube_bounding_box(&all_bounding_box, s, 1);
+	
+	vec3 v = {-1, -1, 0.5};
+	
+	glPushMatrix();
+	glTranslatef(-1, -1, 0.5);
+	draw_model(&scene->models[0]);
+	glPopMatrix();
+	
+	make_cube_bounding_box(&all_bounding_box, v, 1);
+	*/
 }
 
- void draw_trampoline(const Scene* scene)
+void draw_trampoline(const Scene* scene)
  {
 	glBindTexture(GL_TEXTURE_2D, scene->texture_id[1]);
 	glPushMatrix();
@@ -229,7 +248,7 @@ void draw_bounding_box_example(const Scene* scene)
 	glPopMatrix();
  }
  
- void draw_bounce_example(const Scene* scene)
+void draw_bounce_example(const Scene* scene)
 {
 	if (ball_simulation)
 	{
@@ -251,7 +270,7 @@ void draw_bounding_box_example(const Scene* scene)
 	}
  }
  
- void draw_transparent_texture_example(const Scene* scene)
+void draw_transparent_texture_example(const Scene* scene)
  {
 	int i=-5;
 	int j=5;

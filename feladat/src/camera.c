@@ -128,7 +128,7 @@ void show_texture_preview()
 
 void show_users_guide()
 {
-	GLuint users_guide = load_texture("data/users_guide.png"); 
+	GLuint users_guide = load_texture("data/textures/users_guide.png"); 
     glBindTexture(GL_TEXTURE_2D, users_guide);
 
 	glDisable(GL_LIGHTING);
