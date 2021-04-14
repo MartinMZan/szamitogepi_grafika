@@ -5,6 +5,7 @@ Data jegyzék linkje: https://drive.google.com/file/d/1XGZBsEkHPAvlpfFhqRw96VigA
 Féléves feladatom különböző OpenGL-hez kötődő és nem kötődő funkciók implementálását valósítja meg. Egy amolyan bemutató jellegű program.
 
 A minimális elvárások közül teljesíti:
+
 -Kamerakezelés: alapból benne volt a Cube példában
 -Objektumok: több modellt is használ, melyet külön fájlokból be lehet tölteni
 -Animáció, mozgatás: a benne lévő labda modell "mozgatható" (később kifejtem), illetve fényerő állítható
@@ -14,6 +15,7 @@ A minimális elvárások közül teljesíti:
 -Strukturáltság, könnyen kezelés: A 3 többlet funkcióból 2-nek saját header és c állományokathoztam létre a strukturáltság érdekében, próbáltam sokat mondó változóneveket adni, illetve a gombokat és a hozzátartozó funkciókat beszédesen próbáltam kiosztani.
 
 A többlet funkciók közül teljesíti:
+
 	1) Fizika: Egy pattogó labda szimulációját készítettem el programomban.
 
 	Felhasználói szemszögből:
