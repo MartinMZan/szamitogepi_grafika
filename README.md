@@ -2,7 +2,13 @@
 
 Data jegyzék linkje: https://drive.google.com/file/d/1XGZBsEkHPAvlpfFhqRw96VigA0A8hOcR/view?usp=sharing
 
-Féléves feladatom különböző OpenGL-hez kötődő és nem kötődő funkciók implementálását valósítja meg. Egy amolyan bemutató jellegű program.
+Féléves feladatom egy ügyességi játékot foglal magában.
+A játék lényege, hogy ahogy a játékos elindította a labda szimulációt (játékot) a program aktivizálja egy labda mozgását.
+A játékos akkor nyeri meg a játékot, hogyha több mint 60 másodpercen át ki tudja kerülni azt, hogy egy labda nekiütközzön.
+A játékos veszít, hogyha egy labda belecsapódik a játékosba.
+A játék nehezítése érdekében a program időközönként újabb labdákat indít útjának. 
+A labdák véletlen irányba mozognak (a nehézség növelése érdekében megfelelő véletlen értékekkel), ütköznek a fallal, a többi labdával és a játékossal is.
+
 
 A minimális elvárások közül teljesíti:
 
@@ -12,7 +18,7 @@ A minimális elvárások közül teljesíti:
 
 -Animáció, mozgatás: a benne lévő labda modell "mozgatható" (később kifejtem), illetve fényerő állítható
 
--Textúrák: minden modell kapott textúrát, a szükségesnél talán több félét is használtam
+-Textúrák: minden modell kapott textúrát, illetve több textúra is töltődik a játék megnyerése/elvesztése esetén
 
 -Fények: állíthatóak a leírásnak megfelelően, + és - gombokkal
 
@@ -22,15 +28,14 @@ A minimális elvárások közül teljesíti:
 
 A többlet funkciók közül teljesíti:
 
-	1) Fizika: Egy pattogó labda szimulációját készítettem el programomban.
+	1) Fizika: Több pattogó labda szimulációját készítettem el programomban.
 
 	Felhasználói szemszögből:
-A szimuláció B (Bounce vagy Ball) gombnyomásra indul. Ekkor a felhasználó azt látja, hogy a labda leesik, majd visszapattan. Ekkor már nem ugyanolyan magasra pattan fel és ezt egészen addig folytatja, amíg meg nem áll. Amint a pattogás befejeződött és eltelt egy megadott mennyiségű idő a labda újra a kezdeti pozíciójára kerül és a felhasználó ha szeretné szintén a B gomb lenyomásával új szimulációt indíthat.
+A szimuláció (játék) B (Bounce vagy Ball) gombnyomásra indul. A labdák ütközés után a megfelelő irányba mennek tovább. Amint a játék befejeződött, a labda újra a kezdeti pozíciójára kerül és a felhasználó ha szeretné szintén a kétszeri B gomb lenyomásával új szimulációt indíthat.
 
 	Programozói szemszögből:
-A labda visszapattanása utáni "energiája" valós életből vett számérték ez az alapból 0.8 értékű energy_loss_factor.
-A labda mozgásához több eseményt és eltelt időt is figyelembe kellett venni, sebességet számolni.
-Ha azt tapasztaljuk, hogy a labda mozgatása nem teljesen folytonos, esetleg a labda feljebb repül mint kellene annak oka az lehet, hogy a számítógép nem tudja elég gyorsan lefrissíteni a különböző állapotokat. Ekkor célszerű a bounce.c állományban az update_bounce_ball függvényben a speed_constant nevű változó értékét alacsonyabbra venni. Ekkor a labda mozgása lassabb lesz, viszont "könnyebb dolga" lesz a gépnek.
+A labda ütközésének eseményére (mely egy későbbi pontban van kifejtve) irányvektort kellett számolni a két ütközött labda között. Ehhez lett igazítva az ütközés utáni labdák iránya és X, Y, valamint Z iránybeli sebessége.
+A labda mozgásához több eseményt is figyelembe kellett venni, sebességet számolni.
 
 	2) Átlátszóság: Átlátszó textúrákat alkalmaztam a feladatban.
 	
@@ -41,14 +46,22 @@ A játékos amint elindítja a programot rögtön láthatja azt, hogy a fal egy 
 Jó textúrát sem volt könnyű találni, hogy legyen megfelelő mértékben átlátszó is, és esztétikus is. Mindemellett a kiterjesztésre is kifejezetten figyelni kellett, volt olyan hogy transzparens képként volt hírdetve egy kép és valójában jpg kiterjesztésű volt, melyről tudni kellett hogy nem támogatja az átltászóságot.
 Amire még kifejezetten figyelni kellett, hogy a háttér (ez esetben a festmény) hamarabb legyen renderelve mint maga az átlátszó objektum.
 
-	3) Ütközésvizsgálat: A programba egy kocka alakú bounding-box implementáció készült.
+	3) Ütközésvizsgálat: A program érzékeli a következő ütközéseket: játékos-pálya, játékos-labda, labda-pálya, labda-labda
 
 	Felhasználói szemszögből:
-A játékos hogyha odasétál a földből kiálló kockához azt tapasztalhatja, hogy a falán nem tud átsétálni semelyik irányból, körülötte viszont szabadon mozoghat.
+A játékos nem tud átmenni a falon.
+
+A játékosnak, ha labda ütközik elveszíti a játékot.
+
+A labda, ha nekimegy a pálya szélének visszapattan.
+
+A labda, ha nekiütközik egy másik labdának elmozdul mindkét labda.
+
 
 	Programozói szemszögből:
-Külön struktúrákat hoztam létre a jobban átláthatóság és a kezelhetőség végett.
-Célszerűnek találtam kiszámolni a kocka összes pontját.
+Külön header állományt hoztam létre a jobban átláthatóság és a kezelhetőség végett.
+A játékos-labda, illetve a labda-labda ütközés volt érdekesebb. Előbbinél a labda középpontjának és a kamera pozíciójának távolságát kellett kiszámolni.
+A labda-labda ütközéskor a két labda középpontjának távolságágát kellett viszonyítani a labda méretéhez, figyelembevéve azt is, hogy a labdák széleinek ütközését vizsgáljuk.
 A dolog általam legnehezebbnek része az ütközés detektálása volt, a feltételeket átlátni utólag is kissé kusza.
 
 	Használati útmutató:
