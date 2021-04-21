@@ -23,7 +23,15 @@ void display()
     }
 	
 	if (users_guide_visible) {
-		show_users_guide();
+		show_texture(0);
+	}
+	
+	if (win_game) {
+		show_texture(1);
+	}
+	
+	if (lose_game) {
+		show_texture(2);
 	}
 
     glutSwapBuffers();
@@ -106,10 +114,16 @@ void keyboard(unsigned char key, int UNUSED(x), int UNUSED(y))
 		}
 		break;
 	case 'b':
-		if (!ball_simulation) {
-			init_ball(&ball);
+		if (!ball_simulation && !lose_game && !win_game) {
+			init_balls(&balls, 0);
 			
 			ball_simulation = TRUE;
+		}
+		if (win_game) {
+			win_game = FALSE;
+		}
+		if (lose_game) {
+			lose_game = FALSE;
 		}
 		break;
 	case 27:
@@ -140,7 +154,8 @@ void idle()
     static int last_frame_time = 0;
     int current_time;
     double elapsed_time;
-   
+	int ball_spawn_time = 5;
+	
     current_time = glutGet(GLUT_ELAPSED_TIME);
     elapsed_time = (double)(current_time - last_frame_time) / 1000;
     last_frame_time = current_time;
@@ -148,10 +163,11 @@ void idle()
     update_camera(&camera, elapsed_time);
 	
 	if (ball_simulation) {
-		update_bounce_ball(&ball);
-	}
-	if(get_simulation_end_time(&ball) >= 10) {
-		ball_simulation = FALSE;
+		update_bounce_balls(&balls);
+		
+		if(glutGet(GLUT_ELAPSED_TIME) / 1000 - get_last_ball_init_time(&balls) > ball_spawn_time && get_last_ball_index(&balls) < 9) {
+			init_balls(&balls, get_last_ball_index(&balls) + 1);
+		}
 	}
 	
     glutPostRedisplay();

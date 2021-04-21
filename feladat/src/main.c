@@ -40,8 +40,8 @@ int main(int argc, char* argv[])
 	
     set_callbacks();
 	
-	init_all_bounding_box(&all_bounding_box);
-	init_ball(&ball);
+	init_cube_bounding_box(&cube_bounding_box);
+	init_ball_times(&balls);
 	
     glutMainLoop();
 

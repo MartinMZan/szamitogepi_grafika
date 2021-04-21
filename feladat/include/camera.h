@@ -1,8 +1,10 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include <stdbool.h>
 #include "utils.h"
 #include "bounding_box.h"
+#include "bounce.h"
 
 /**
  * Camera, as a moving point with direction
@@ -17,17 +19,23 @@ typedef struct Camera
 /**
  * Is the texture preview visible?
  */
-int is_preview_visible;
+bool is_preview_visible;
 
 /**
  * Is the user's guide visible?
  */
-int users_guide_visible;
+bool users_guide_visible;
 
 /**
  * Is the ball simulation running?
  */
-int ball_simulation;
+bool ball_simulation;
+
+/**
+ * Is the player win/lose the game?
+ */
+bool win_game;
+bool lose_game;
  
 /**
  * Initialize the camera to the start position.
@@ -65,8 +73,8 @@ void set_camera_side_speed(Camera* camera, double speed);
 void show_texture_preview();
 
 /**
- * Turn on the user's guide.
+ * Used to show the user's guide/winning screen/losing screen.
  */
-void show_users_guide();
+void show_texture(int code);
 
 #endif /* CAMERA_H */

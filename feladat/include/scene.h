@@ -42,11 +42,6 @@ void set_material(const Material* material);
 void draw_scene(const Scene* scene);
 
 /**
- * Draw the origin of the world coordinate system.
- */
-void draw_origin();
-
-/**
  * Draw more models from the same type which is used for draw the wall.
  */
 void draw_wall(Model model, int startpoint, int endpoint, int centerx, int centery);
@@ -67,7 +62,7 @@ void draw_map(const Scene* scene);
 void draw_bounding_box_example(const Scene* scene);
 
 /**
- * Draw a trampoline.
+ * Draw a trampoline which look like a castle.
  */
 void draw_trampoline(const Scene* scene);
 
@@ -80,4 +75,5 @@ void draw_bounce_example(const Scene* scene);
  * Draw an example of models with transparent textures.
  */
 void draw_transparent_texture_example(const Scene* scene);
+
 #endif /* SCENE_H */

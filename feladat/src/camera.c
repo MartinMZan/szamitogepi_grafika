@@ -21,40 +21,52 @@ void init_camera(Camera* camera)
     is_preview_visible 	= FALSE;
 	users_guide_visible = FALSE;
 	ball_simulation 	= FALSE;
+	win_game			= FALSE;
+	lose_game			= FALSE;
 }
 
 void update_camera(Camera* camera, double time)
 {
     double angle;
     double side_angle;
-	int hitx = hit_bounding_box_x(&all_bounding_box, camera->position);
-	int hity = hit_bounding_box_y(&all_bounding_box, camera->position);
+	int hitx = hit_bounding_box_x(&cube_bounding_box, camera->position);
+	int hity = hit_bounding_box_y(&cube_bounding_box, camera->position);
+	int hitmap = hit_map_by_player(camera->position);
 	
     angle = degree_to_radian(camera->rotation.z);
     side_angle = degree_to_radian(camera->rotation.z + 90.0);
 	
-	if (hitx)
-	{
-		camera->position.x = camera->position.x + 0.0001 * pow(-1, (double)hitx);
+	if (hitmap) {
+		switch (hitmap) {
+			case 1: camera->position.x = camera->position.x - 0.0003; break;
+			case 2: camera->position.x = camera->position.x + 0.0003; break;
+			case 3: camera->position.y = camera->position.y - 0.0003; break;
+			case 4: camera->position.y = camera->position.y + 0.0003; break;
+		}
 	}
-	else
-	{
+	else {
+		if (hitx)
+		{
+		camera->position.x = camera->position.x + -0.0001 * pow(-1, (double)hitx);
+		}
+		else
+		{
 		camera->position.x += cos(angle) * camera->speed.y * time;
 		camera->position.x += cos(side_angle) * camera->speed.x * time;
-	}
+		}
 	
-	
-	if (hity)
-	{
+		if (hity)
+		{
 		camera->position.y = camera->position.y + 0.0001 * pow(-1, (double)hity);
-	}
-	else
-	{
+		}
+		else
+		{
 		camera->position.y += sin(angle) * camera->speed.y * time;
 		camera->position.y += sin(side_angle) * camera->speed.x * time;
+		}
 	}
 	
-    
+	game_end_result(&balls, camera->position);
 }
 
 void set_view(const Camera* camera)
@@ -69,8 +81,8 @@ void set_view(const Camera* camera)
 
 void rotate_camera(Camera* camera, double horizontal, double vertical)
 {
-    camera->rotation.z -= horizontal;
-    camera->rotation.x -= vertical;
+    camera->rotation.z += horizontal;
+    camera->rotation.x += vertical;
 
     if (camera->rotation.z < 0) {
         camera->rotation.z += 360.0;
@@ -126,11 +138,22 @@ void show_texture_preview()
 	glDisable(GL_COLOR_MATERIAL);
 }
 
-void show_users_guide()
+void show_texture(int code)
 {
-	GLuint users_guide = load_texture("data/textures/users_guide.png"); 
-    glBindTexture(GL_TEXTURE_2D, users_guide);
-
+	GLuint texture = 0;
+	if (code == 0) {
+		texture = load_texture("data/textures/users_guide.png"); 
+	}
+	else if (code == 1) {
+		texture = load_texture("data/textures/win.png"); 
+	}
+	
+	else if (code == 2) {
+		texture = load_texture("data/textures/lose.png"); 
+	}
+	
+    glBindTexture(GL_TEXTURE_2D, texture);
+	
 	glDisable(GL_LIGHTING);
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_COLOR_MATERIAL);

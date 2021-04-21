@@ -1,45 +1,55 @@
 #ifndef BOUNDING_BOX_H
 #define BOUNDING_BOX_H
 
+#include <stdbool.h>
 #include "utils.h"
+#include "bounce.h"
 
 typedef struct Cube_bounding_box
 {
-	vec3 left_bottom_front;
-	vec3 left_upper_front;
-	vec3 right_upper_front;
-	vec3 right_bottom_front;
-	vec3 left_bottom_back;
-	vec3 left_upper_back;
-	vec3 right_upper_back;
-	vec3 right_bottom_back;
+	float min_x;
+	float min_y;
+	float max_x;
+	float max_y;
 } Cube_bounding_box;
 
-typedef struct All_bounding_box
-{
-	Cube_bounding_box cube_bounding_box[1];
-	float distance;
-} All_bounding_box;
+Cube_bounding_box cube_bounding_box;
 
-All_bounding_box all_bounding_box;
+float distance;
 
 /**
- * Initialize the all_bounding_box structure.
+ * Initialize the cube_bounding_box structure.
  */
-void init_all_bounding_box(All_bounding_box* all_bounding_box);
-/**
- * Add a new bounding box to the all_bounding_boxes variable.
- */
-void make_cube_bounding_box(All_bounding_box* all_bounding_box, vec3 center, float size);
+void init_cube_bounding_box(Cube_bounding_box* cube_bounding_box);
 
 /**
- * Is the camera go into a bounding box along the X axis? Hit codes: 1 - front, 2 - back.
+ * Give value to the cube_bounding_box structure.
  */
-int hit_bounding_box_x(All_bounding_box* all_bounding_box, vec3 camera_position);
+void make_cube_bounding_box(Cube_bounding_box* cube_bounding_box, vec3 center, float size);
 
 /**
- * Is the camera go into a bounding box along the Y axis? Hit codes: 1 - right, 2 - left
+ * Which side of the bounding box hit by the camera along the X axis? Hit codes: 1 - front, 2 - back.
  */
-int hit_bounding_box_y(All_bounding_box* all_bounding_box, vec3 camera_position);
+int hit_bounding_box_x(Cube_bounding_box* cube_bounding_box, vec3 camera_position);
+
+/**
+ * Which side of the bounding box hit by the camera along the Y axis? Hit codes: 1 - right, 2 - left.
+ */
+int hit_bounding_box_y(Cube_bounding_box* cube_bounding_box, vec3 camera_position);
+
+/**
+ * Which wall of the map hit by the camera?
+ */
+int hit_map_by_player(vec3 position);
+
+/**
+ * Moves a ball when it collide with the edge of the map.
+ */
+void hit_map_by_ball(Balls* balls, int i);
+
+/**
+ * Moves two balls when they collide.
+ */
+void ball_collision(Balls* balls, int i, int j);
 
 #endif /* BOUNDING_BOX.H */
