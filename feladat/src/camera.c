@@ -2,9 +2,7 @@
 
 #include <GL/glut.h>
 
-#include <stdio.h>
 #include <math.h>
-#include "texture.h"
 
 void init_camera(Camera* camera)
 {
@@ -29,8 +27,6 @@ void update_camera(Camera* camera, double time)
 {
     double angle;
     double side_angle;
-	int hitx = hit_bounding_box_x(&cube_bounding_box, camera->position);
-	int hity = hit_bounding_box_y(&cube_bounding_box, camera->position);
 	int hitmap = hit_map_by_player(camera->position);
 	
     angle = degree_to_radian(camera->rotation.z);
@@ -38,35 +34,18 @@ void update_camera(Camera* camera, double time)
 	
 	if (hitmap) {
 		switch (hitmap) {
-			case 1: camera->position.x = camera->position.x - 0.0003; break;
-			case 2: camera->position.x = camera->position.x + 0.0003; break;
-			case 3: camera->position.y = camera->position.y - 0.0003; break;
-			case 4: camera->position.y = camera->position.y + 0.0003; break;
+			case 1: camera->position.x = 5-0.03; break;
+			case 2: camera->position.x = -5+0.03; break;
+			case 3: camera->position.y = 5-0.03; break;
+			case 4: camera->position.y = -5+0.03; break;
 		}
 	}
 	else {
-		if (hitx)
-		{
-		camera->position.x = camera->position.x + -0.0001 * pow(-1, (double)hitx);
-		}
-		else
-		{
 		camera->position.x += cos(angle) * camera->speed.y * time;
 		camera->position.x += cos(side_angle) * camera->speed.x * time;
-		}
-	
-		if (hity)
-		{
-		camera->position.y = camera->position.y + 0.0001 * pow(-1, (double)hity);
-		}
-		else
-		{
 		camera->position.y += sin(angle) * camera->speed.y * time;
 		camera->position.y += sin(side_angle) * camera->speed.x * time;
-		}
 	}
-	
-	game_end_result(&balls, camera->position);
 }
 
 void set_view(const Camera* camera)
@@ -177,4 +156,25 @@ void show_texture(int code)
 	glEnable(GL_LIGHTING);
     glEnable(GL_DEPTH_TEST);
 	glDisable(GL_COLOR_MATERIAL);
+}
+
+int hit_map_by_player(vec3 position)
+{
+	float map_size = 5-0.03;
+	
+	if (position.x > map_size) {
+		return 1;
+	}
+	else if (position.x < (-1) * map_size) {
+		return 2;
+	}
+	else if (position.y > map_size) {
+		return 3;
+	}
+	else if (position.y < (-1) * map_size) {
+		return 4;
+	}
+	else {
+		return 0;
+	}
 }

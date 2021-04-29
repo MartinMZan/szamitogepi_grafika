@@ -8,6 +8,16 @@ struct {
     int y;
 } mouse_position;
 
+Scene* get_scene(Scene* scene)
+{
+	return scene;
+}
+
+vec3 get_camera_position(Camera* camera)
+{
+	return camera->position;
+}
+
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -115,8 +125,8 @@ void keyboard(unsigned char key, int UNUSED(x), int UNUSED(y))
 		break;
 	case 'b':
 		if (!ball_simulation && !lose_game && !win_game) {
-			init_balls(&balls, 0);
-			
+			set_game_start_time(&scene, glutGet(GLUT_ELAPSED_TIME)/1000);
+			init_balls(get_scene(&scene), 0);
 			ball_simulation = TRUE;
 		}
 		if (win_game) {
@@ -154,7 +164,7 @@ void idle()
     static int last_frame_time = 0;
     int current_time;
     double elapsed_time;
-	int ball_spawn_time = 5;
+	static int ball_spawn_time = 5;
 	
     current_time = glutGet(GLUT_ELAPSED_TIME);
     elapsed_time = (double)(current_time - last_frame_time) / 1000;
@@ -163,12 +173,14 @@ void idle()
     update_camera(&camera, elapsed_time);
 	
 	if (ball_simulation) {
-		update_bounce_balls(&balls);
+		update_bounce_balls(get_scene(&scene), elapsed_time);
 		
-		if(glutGet(GLUT_ELAPSED_TIME) / 1000 - get_last_ball_init_time(&balls) > ball_spawn_time && get_last_ball_index(&balls) < 9) {
-			init_balls(&balls, get_last_ball_index(&balls) + 1);
+		if(glutGet(GLUT_ELAPSED_TIME) / 1000 - get_last_ball_spawn_time(&scene) > ball_spawn_time && get_last_ball_index(get_scene(&scene)) < 9) {
+			init_balls(get_scene(&scene), get_last_ball_index(get_scene(&scene)) + 1);
 		}
 	}
+	
+	check_game_finished(get_scene(&scene), get_camera_position(&camera));
 	
     glutPostRedisplay();
 }

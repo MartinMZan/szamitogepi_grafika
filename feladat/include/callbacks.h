@@ -1,8 +1,7 @@
 #ifndef CALLBACKS_H
 #define CALLBACKS_H
 
-#include "camera.h"
-#include "scene.h"
+#include "ball.h"
 
 #include <GL/glut.h>
 
@@ -15,6 +14,12 @@ Scene scene;
  * Camera
  */
 Camera camera;
+
+/**
+ * Getters.
+ */
+Scene* get_scene(Scene* scene);
+vec3 get_camera_position(Camera* camera);
 
 /**
  * Call when need to display the graphical content.

@@ -1,10 +1,9 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <stdbool.h>
 #include "utils.h"
-#include "bounding_box.h"
-#include "bounce.h"
+#include <stdbool.h>
+#include "texture.h"
 
 /**
  * Camera, as a moving point with direction
@@ -76,5 +75,10 @@ void show_texture_preview();
  * Used to show the user's guide/winning screen/losing screen.
  */
 void show_texture(int code);
+
+/**
+ * Which wall of the map hit by the camera?
+ */
+int hit_map_by_player(vec3 position);
 
 #endif /* CAMERA_H */

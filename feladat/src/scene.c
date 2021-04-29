@@ -4,19 +4,17 @@
 
 #include <obj/load.h>
 #include <obj/draw.h>
-#include <math.h>
 
 void init_scene(Scene* scene)
 {
     load_model(&(scene->models[0]), "data/models/cube.obj");
-	load_model(&(scene->models[1]), "data/models/trampoline.obj");
-	load_model(&(scene->models[2]), "data/models/ball.obj");
+	load_model(&(scene->models[1]), "data/models/ball.obj");
 	
     scene->texture_id[0] = load_texture("data/textures/cube.jpg"); 
-	scene->texture_id[1] = load_texture("data/textures/trampoline.png"); 
-	scene->texture_id[2] = load_texture("data/textures/ball.jpg");
-	scene->texture_id[3] = load_texture("data/textures/transparent.png");
-	scene->texture_id[4] = load_texture("data/textures/paint.jpg");
+	scene->texture_id[1] = load_texture("data/textures/ball.jpg");
+	scene->texture_id[2] = load_texture("data/textures/transparent.png");
+	scene->texture_id[3] = load_texture("data/textures/paint.jpg");
+	scene->texture_id[4] = load_texture("data/textures/progress_bar.jpg");
 	
     scene->material.ambient.red = 0.2;
     scene->material.ambient.green = 0.2;
@@ -33,6 +31,66 @@ void init_scene(Scene* scene)
     scene->material.shininess = 0.0;
 	
 	scene->ambient_light = 0.2f;
+	scene->diffuse_light = 0.7f;
+	
+	scene->last_ball_index = -1;
+	
+	ball_size = 0.2;
+}
+
+void init_balls(Scene* scene, int index)
+{
+	float norm;
+	int i;
+	
+	for (i=0; i<get_last_ball_index(scene); i++) {
+		if ( 2 * ball_size > sqrt( pow(2.0 - scene->ball[i].position.x, 2) + pow(0.0 - scene->ball[i].position.y, 2) + pow(2.0 - scene->ball[i].position.z, 2) ) ) {
+			return;
+		}
+	}
+
+	scene->ball[index].position.x = 2.0f;
+	scene->ball[index].position.y = 0.0f;
+	scene->ball[index].position.z = 2.0f;
+	
+	do {
+		scene->ball[index].speed.x = rand()%201 / 100 - 1;
+		scene->ball[index].speed.y = rand()%201 / 100 - 1;
+		scene->ball[index].speed.z = rand()%201 / 100 - 1;
+	} while (scene->ball[index].speed.z >= -0.3 && scene->ball[index].speed.z <= 0.3);
+	
+	norm = fabs(scene->ball[index].speed.x + scene->ball[index].speed.y + scene->ball[index].speed.z);
+	scene->ball[index].speed.x /= norm;
+	scene->ball[index].speed.y /= norm;
+	scene->ball[index].speed.z /= norm;
+	
+	scene->last_ball_spawn_time = glutGet(GLUT_ELAPSED_TIME)/1000;
+	scene->last_ball_index = index;
+}
+
+vec3 get_ball_position(const Scene* scene, int index)
+{
+	return scene->ball[index].position;
+}
+
+float get_last_ball_spawn_time(const Scene* scene)
+{
+	return scene->last_ball_spawn_time;
+}
+
+int get_last_ball_index(const Scene* scene)
+{
+	return scene->last_ball_index;
+}
+
+void set_game_start_time(Scene* scene, float time)
+{
+	scene->game_start_time = time;
+}
+
+void set_last_ball_index(Scene* scene, int index)
+{
+	scene->last_ball_index = index;
 }
 
 void set_lighting(const Scene* scene)
@@ -47,14 +105,14 @@ void set_lighting(const Scene* scene)
 	ambient_light[2] = scene->ambient_light;
 	ambient_light[3] = 1.0f;
 	
-	diffuse_light[0] = 0.8f;
-	diffuse_light[1] = 0.8f;
-	diffuse_light[2] = 0.8f;
+	diffuse_light[0] = scene->diffuse_light;
+	diffuse_light[1] = scene->diffuse_light;
+	diffuse_light[2] = scene->diffuse_light;
 	diffuse_light[3] = 1.0f;
 	
-	specular_light[0] = 0.8f;
-	specular_light[1] = 0.8f;
-	specular_light[2] = 0.8f;
+	specular_light[0] = 0.7f;
+	specular_light[1] = 0.7f;
+	specular_light[2] = 0.7f;
 	specular_light[3] = 1.0f;
 	
 	position[0] = 0.0f;
@@ -70,13 +128,23 @@ void set_lighting(const Scene* scene)
 
 void change_lighting(Scene* scene, float amount)
 {
-	if (amount > 0 && scene->ambient_light < 1)
+	if (amount > 0)
 	{
-		scene->ambient_light += amount;
+		if (scene->diffuse_light < 1) {
+			scene->diffuse_light += amount;
+		}
+		else if (scene->ambient_light < 1) {
+			scene->ambient_light += amount;
+		}
 	}
-	else if (amount < 0 && scene->ambient_light > 0)
+	else if (amount < 0)
 	{
-		scene->ambient_light += amount;
+		if (scene->diffuse_light > 0) {
+			scene->diffuse_light += amount;
+		}
+		else if (scene->ambient_light > 0) {
+			scene->ambient_light += amount;
+		}
 	}
 }
 
@@ -112,9 +180,9 @@ void draw_scene(const Scene* scene)
     
 	draw_map(scene);
 	
-	draw_bounce_example(scene);
+	draw_ball(scene);
 	draw_transparent_texture_example(scene);
-	
+	draw_progress_bar(scene);
 }
 
 void draw_wall(Model model, int startpoint, int endpoint, int centerx, int centery)
@@ -187,50 +255,28 @@ void draw_map(const Scene* scene)
 	glPopMatrix();
 }
 
-void draw_bounding_box_example(const Scene* scene)
-{
-	vec3 t = {-3, -3, 0.5};
-	
-	glPushMatrix();
-	glTranslatef(-3, -3, 0.5);
-	draw_model(&scene->models[0]);
-	glPopMatrix();
-	
-	make_cube_bounding_box(&cube_bounding_box, t, 1);
-}
-
-void draw_trampoline(const Scene* scene)
-{
-	glBindTexture(GL_TEXTURE_2D, scene->texture_id[1]);
-	glPushMatrix();
-	glTranslatef(-3, 2, 0);
-	glRotatef(90, 1, 0, 0);
-	draw_model(&scene->models[1]);
-	glPopMatrix();
-}
-
-void draw_bounce_example(const Scene* scene)
+void draw_ball(const Scene* scene)
 {
 	int i;
 	float scalevalue = 2.0;
 	
-	glBindTexture(GL_TEXTURE_2D, scene->texture_id[2]);
+	glBindTexture(GL_TEXTURE_2D, scene->texture_id[1]);
 	
-	if(get_last_ball_index(&balls) == -1) {
+	if(get_last_ball_index(scene) == -1) {
 		glPushMatrix();
 		glTranslatef(2.0f, 0.0f, 2.0f);
 		glScalef(scalevalue, scalevalue, scalevalue);
-		draw_model(&scene->models[2]);
+		draw_model(&scene->models[1]);
 		glPopMatrix();
 	}
 	else {
-		for (i=0; i<=get_last_ball_index(&balls); i++) {
-		vec3 ball = get_ball_position(&balls, i);
+		for (i=0; i<=get_last_ball_index(scene); i++) {
+		vec3 ball = get_ball_position(scene, i);
 		
 		glPushMatrix();
 		glTranslatef(ball.x, ball.y, ball.z);
 		glScalef(scalevalue, scalevalue, scalevalue);
-		draw_model(&scene->models[2]);
+		draw_model(&scene->models[1]);
 		glPopMatrix();
 		}
 	}
@@ -241,7 +287,7 @@ void draw_transparent_texture_example(const Scene* scene)
 	int i=-5;
 	int j=5;
 	
-	glBindTexture(GL_TEXTURE_2D, scene->texture_id[4]);
+	glBindTexture(GL_TEXTURE_2D, scene->texture_id[3]);
 	glPushMatrix();
 	glTranslatef(20, 0, 4.5);
 	glScalef(1, 20, 20);
@@ -251,7 +297,7 @@ void draw_transparent_texture_example(const Scene* scene)
 	
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
-	glBindTexture(GL_TEXTURE_2D, scene->texture_id[3]);
+	glBindTexture(GL_TEXTURE_2D, scene->texture_id[2]);
 	glPushMatrix();
 	glTranslatef(6, 0, 4.5);
 	glRotatef(90, 0, 1, 0);
@@ -270,4 +316,51 @@ void draw_transparent_texture_example(const Scene* scene)
 	}
 	glPopMatrix();
 	glDisable(GL_BLEND);
+ }
+ 
+ void draw_progress_bar(Scene* scene)
+ {
+	int x = 30;
+	int y = 30;
+	int width = 300;
+	int height = 200;
+	
+	glBindTexture(GL_TEXTURE_2D, scene->texture_id[4]);
+	
+	glDisable(GL_LIGHTING);
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_COLOR_MATERIAL);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+	glColor3f(1, 1, 1);
+	
+	/*
+    glBegin(GL_QUADS);
+    glTexCoord2f(0, 0);
+    glVertex3f(-1, 1.3, -3);
+    glTexCoord2f(600/640, 0);
+    glVertex3f(1, 1.3, -3);
+    glTexCoord2f(600/640, 100/480);
+    glVertex3f(1, 1.1, -3);
+    glTexCoord2f(0, 100/480);
+    glVertex3f(-1, 1.1, -3);
+    glEnd();
+	*/
+	
+	
+    glBegin(GL_QUADS);
+	glColor3f(0, 0, 0);
+    glVertex3f(-1.8, 1.3, -3);
+    glVertex3f(1, 1.3, -3);
+    glVertex3f(1, 1.1, -3);
+    glVertex3f(-1, 1.1, -3);
+    glEnd();
+	
+
+
+	glEnable(GL_LIGHTING);
+    glEnable(GL_DEPTH_TEST);
+	glDisable(GL_COLOR_MATERIAL);
  }
