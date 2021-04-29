@@ -182,7 +182,6 @@ void draw_scene(const Scene* scene)
 	
 	draw_ball(scene);
 	draw_transparent_texture_example(scene);
-	draw_progress_bar(scene);
 }
 
 void draw_wall(Model model, int startpoint, int endpoint, int centerx, int centery)

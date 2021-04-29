@@ -97,6 +97,4 @@ void draw_ball(const Scene* scene);
  */
 void draw_transparent_texture_example(const Scene* scene);
 
-void draw_progress_bar(Scene* scene);
-
 #endif /* SCENE_H */
