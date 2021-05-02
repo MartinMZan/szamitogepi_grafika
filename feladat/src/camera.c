@@ -15,12 +15,11 @@ void init_camera(Camera* camera)
     camera->speed.x = 0.0;
     camera->speed.y = 0.0;
     camera->speed.z = 0.0;
-
-    is_preview_visible 	= FALSE;
-	users_guide_visible = FALSE;
-	ball_simulation 	= FALSE;
-	win_game			= FALSE;
-	lose_game			= FALSE;
+	
+	users_guide_visible = false;
+	ball_simulation 	= false;
+	win_game			= false;
+	lose_game			= false;
 }
 
 void update_camera(Camera* camera, double time)
@@ -34,10 +33,10 @@ void update_camera(Camera* camera, double time)
 	
 	if (hitmap) {
 		switch (hitmap) {
-			case 1: camera->position.x = 5-0.03; break;
-			case 2: camera->position.x = -5+0.03; break;
-			case 3: camera->position.y = 5-0.03; break;
-			case 4: camera->position.y = -5+0.03; break;
+			case 1: camera->position.x = 5-0.15; break;
+			case 2: camera->position.x = -5+0.15; break;
+			case 3: camera->position.y = 5-0.15; break;
+			case 4: camera->position.y = -5+0.15; break;
 		}
 	}
 	else {
@@ -90,33 +89,6 @@ void set_camera_side_speed(Camera* camera, double speed)
     camera->speed.x = speed;
 }
 
-void show_texture_preview()
-{
-    glDisable(GL_LIGHTING);
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_COLOR_MATERIAL);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    glColor3f(1, 1, 1);
-
-    glBegin(GL_QUADS);
-    glTexCoord2f(0, 0);
-    glVertex3f(-1, 1, -3);
-    glTexCoord2f(1, 0);
-    glVertex3f(1, 1, -3);
-    glTexCoord2f(1, 1);
-    glVertex3f(1, -1, -3);
-    glTexCoord2f(0, 1);
-    glVertex3f(-1, -1, -3);
-    glEnd();
-
-	glEnable(GL_LIGHTING);
-    glEnable(GL_DEPTH_TEST);
-	glDisable(GL_COLOR_MATERIAL);
-}
-
 void show_texture(int code)
 {
 	GLuint texture = 0;
@@ -160,7 +132,7 @@ void show_texture(int code)
 
 int hit_map_by_player(vec3 position)
 {
-	float map_size = 5-0.03;
+	float map_size = 5-0.15;
 	
 	if (position.x > map_size) {
 		return 1;

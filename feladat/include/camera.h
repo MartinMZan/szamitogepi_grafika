@@ -16,11 +16,6 @@ typedef struct Camera
 } Camera;
 
 /**
- * Is the texture preview visible?
- */
-bool is_preview_visible;
-
-/**
  * Is the user's guide visible?
  */
 bool users_guide_visible;

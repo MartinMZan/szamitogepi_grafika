@@ -1,9 +1,7 @@
 #ifndef CALLBACKS_H
 #define CALLBACKS_H
 
-#include "ball.h"
-
-#include <GL/glut.h>
+#include "scene.h"
 
 /**
  * Scene

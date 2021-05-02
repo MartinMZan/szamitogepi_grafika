@@ -2,17 +2,12 @@
 #define SCENE_H
 
 #include "camera.h"
+#include "ball.h"
 
-#include <math.h>
 #include <obj/model.h>
 
 #define BALL_COUNT 10
-
-typedef struct Ball
-{
-	vec3 position;
-	vec3 speed;
-} Ball;
+#define PI 3.14159265358979323846
 
 typedef struct Scene
 {
@@ -21,13 +16,17 @@ typedef struct Scene
     GLuint texture_id[5];
 	float ambient_light;
 	float diffuse_light;
+	float in_game_light[3];
+	
 	Ball ball[BALL_COUNT];
 	float game_start_time;
+	float win_time;
 	float last_ball_spawn_time;
 	int last_ball_index;
 } Scene;
 
 float ball_size;
+
 
 /**
  * Initialize the scene by loading models.
@@ -63,6 +62,11 @@ void set_lighting(const Scene* scenes);
 void change_lighting(Scene* scene, float amount);
 
 /**
+ * Change the specular light value based on how much time progressed.
+ */
+void change_lighting_during_game(Scene* scene);
+
+/**
  * Set the current material.
  */
 void set_material(const Material* material);
@@ -90,11 +94,15 @@ void draw_map(const Scene* scene);
 /**
  * Draw ball to demonstrate the bounce physics implementation.
  */
-void draw_ball(const Scene* scene);
+void draw_ball(const Ball ball, const Model model);
 
 /**
  * Draw an example of models with transparent textures.
  */
 void draw_transparent_texture_example(const Scene* scene);
 
+/**
+ * Draw shadow under a ball.
+ */
+void draw_shadow(float cx, float cy);
 #endif /* SCENE_H */

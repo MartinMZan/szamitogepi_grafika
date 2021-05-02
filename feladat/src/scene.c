@@ -32,10 +32,14 @@ void init_scene(Scene* scene)
 	
 	scene->ambient_light = 0.2f;
 	scene->diffuse_light = 0.7f;
+	scene->in_game_light[0] = 0.7f;
+	scene->in_game_light[1] = 0.7f;
+	scene->in_game_light[2] = 0.7f;
 	
 	scene->last_ball_index = -1;
 	
 	ball_size = 0.2;
+	scene->win_time = 60;
 }
 
 void init_balls(Scene* scene, int index)
@@ -105,15 +109,30 @@ void set_lighting(const Scene* scene)
 	ambient_light[2] = scene->ambient_light;
 	ambient_light[3] = 1.0f;
 	
-	diffuse_light[0] = scene->diffuse_light;
-	diffuse_light[1] = scene->diffuse_light;
-	diffuse_light[2] = scene->diffuse_light;
-	diffuse_light[3] = 1.0f;
-	
-	specular_light[0] = 0.7f;
-	specular_light[1] = 0.7f;
-	specular_light[2] = 0.7f;
-	specular_light[3] = 1.0f;
+	if (ball_simulation)
+	{
+		diffuse_light[0] = scene->in_game_light[0];
+		diffuse_light[1] = scene->in_game_light[1];
+		diffuse_light[2] = scene->in_game_light[2];
+		diffuse_light[3] = 1.0f;
+		
+		specular_light[0] = scene->in_game_light[0];
+		specular_light[1] = scene->in_game_light[1];
+		specular_light[2] = scene->in_game_light[2];
+		specular_light[3] = 1.0f;
+	}
+	else
+	{
+		diffuse_light[0] = scene->diffuse_light;
+		diffuse_light[1] = scene->diffuse_light;
+		diffuse_light[2] = scene->diffuse_light;
+		diffuse_light[3] = 1.0f;
+		
+		specular_light[0] = 0.7;
+		specular_light[1] = 0.7;
+		specular_light[2] = 0.7;
+		specular_light[3] = 1.0f;
+	}
 	
 	position[0] = 0.0f;
 	position[1] = 0.0f;
@@ -148,6 +167,15 @@ void change_lighting(Scene* scene, float amount)
 	}
 }
 
+void change_lighting_during_game(Scene* scene)
+{
+	if(ball_simulation)
+	{
+		scene->in_game_light[0] = (glutGet(GLUT_ELAPSED_TIME)/1000 - scene->game_start_time) / scene->win_time;
+		scene->in_game_light[1] = 1 - scene->in_game_light[0];
+	}
+}
+
 void set_material(const Material* material)
 {
     float ambient_material_color[3];
@@ -175,13 +203,31 @@ void set_material(const Material* material)
 
 void draw_scene(const Scene* scene)
 {
+	int i;
+	
     set_material(&(scene->material));
     set_lighting(scene);
     
 	draw_map(scene);
 	
-	draw_ball(scene);
+	
 	draw_transparent_texture_example(scene);
+	
+	glBindTexture(GL_TEXTURE_2D, scene->texture_id[1]);
+	if(get_last_ball_index(scene) == -1) {
+		glPushMatrix();
+		glTranslatef(2.0f, 0.0f, 2.0f);
+		glScalef(2.0f, 2.0f, 2.0f);
+		draw_model(&scene->models[1]);
+		glPopMatrix();
+		draw_shadow(2.0f, 0.0f);
+	}
+	else {
+		for (i=0; i<=get_last_ball_index(scene); i++) {
+			draw_ball(scene->ball[i], scene->models[1]);
+			draw_shadow(scene->ball[i].position.x, scene->ball[i].position.y);
+		}
+	}
 }
 
 void draw_wall(Model model, int startpoint, int endpoint, int centerx, int centery)
@@ -254,31 +300,15 @@ void draw_map(const Scene* scene)
 	glPopMatrix();
 }
 
-void draw_ball(const Scene* scene)
+void draw_ball(const Ball ball, const Model model)
 {
-	int i;
-	float scalevalue = 2.0;
+	static float scalevalue = 2.0;
 	
-	glBindTexture(GL_TEXTURE_2D, scene->texture_id[1]);
-	
-	if(get_last_ball_index(scene) == -1) {
-		glPushMatrix();
-		glTranslatef(2.0f, 0.0f, 2.0f);
-		glScalef(scalevalue, scalevalue, scalevalue);
-		draw_model(&scene->models[1]);
-		glPopMatrix();
-	}
-	else {
-		for (i=0; i<=get_last_ball_index(scene); i++) {
-		vec3 ball = get_ball_position(scene, i);
-		
-		glPushMatrix();
-		glTranslatef(ball.x, ball.y, ball.z);
-		glScalef(scalevalue, scalevalue, scalevalue);
-		draw_model(&scene->models[1]);
-		glPopMatrix();
-		}
-	}
+	glPushMatrix();
+	glTranslatef(ball.position.x, ball.position.y, ball.position.z);
+	glScalef(scalevalue, scalevalue, scalevalue);
+	draw_model(&model);
+	glPopMatrix();
  }
 
 void draw_transparent_texture_example(const Scene* scene)
@@ -315,4 +345,22 @@ void draw_transparent_texture_example(const Scene* scene)
 	}
 	glPopMatrix();
 	glDisable(GL_BLEND);
+ }
+ 
+ void draw_shadow(float cx, float cy)
+ {
+	float theta, x, y;
+	float r = 0.23;
+	int number_of_segments = 20;
+	int i;
+	
+	glBegin(GL_POLYGON);
+	glColor3f (1.0, 1.0, 1.0);
+	for (i=0; i < number_of_segments; i++) {
+		theta = 2.0f * 3.1415 * (float)i / (float)number_of_segments;
+		x = r * cosf(theta);
+		y = r * sinf(theta);
+		glVertex3f(x + cx, y + cy, 0.01);
+	}
+	glEnd();
  }

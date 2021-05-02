@@ -1,8 +1,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#define FALSE 0
-#define TRUE 1
+#define false 0
+#define true 1
 
 /**
  * GLSL-like three dimensional vector

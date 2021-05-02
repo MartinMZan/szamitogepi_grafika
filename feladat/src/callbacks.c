@@ -27,10 +27,6 @@ void display()
     set_view(&camera);
     draw_scene(&scene);
     glPopMatrix();
-
-    if (is_preview_visible) {
-        show_texture_preview();
-    }
 	
 	if (users_guide_visible) {
 		show_texture(0);
@@ -107,33 +103,25 @@ void keyboard(unsigned char key, int UNUSED(x), int UNUSED(y))
 	case '-':
 		change_lighting(&scene, -0.1);
 		break;
-	case 't':
-        if (is_preview_visible) {
-            is_preview_visible = FALSE;
-        }
-        else {
-            is_preview_visible = TRUE;
-        }
-        break;
 	case 'u':
 		if  (users_guide_visible) {
-			users_guide_visible = FALSE;
+			users_guide_visible = false;
 		}
 		else {
-			users_guide_visible = TRUE;
+			users_guide_visible = true;
 		}
 		break;
 	case 'b':
 		if (!ball_simulation && !lose_game && !win_game) {
 			set_game_start_time(&scene, glutGet(GLUT_ELAPSED_TIME)/1000);
 			init_balls(get_scene(&scene), 0);
-			ball_simulation = TRUE;
+			ball_simulation = true;
 		}
 		if (win_game) {
-			win_game = FALSE;
+			win_game = false;
 		}
 		if (lose_game) {
-			lose_game = FALSE;
+			lose_game = false;
 		}
 		break;
 	case 27:
@@ -173,14 +161,27 @@ void idle()
     update_camera(&camera, elapsed_time);
 	
 	if (ball_simulation) {
-		update_bounce_balls(get_scene(&scene), elapsed_time);
+		update_bounce_balls(get_scene(&scene)->ball, elapsed_time, get_last_ball_index(&scene));
 		
 		if(glutGet(GLUT_ELAPSED_TIME) / 1000 - get_last_ball_spawn_time(&scene) > ball_spawn_time && get_last_ball_index(get_scene(&scene)) < 9) {
 			init_balls(get_scene(&scene), get_last_ball_index(get_scene(&scene)) + 1);
 		}
+		
+		if (check_game_finished(get_scene(&scene)->ball, get_camera_position(&camera), get_scene(&scene)->game_start_time, get_scene(&scene)->win_time, get_last_ball_index(&scene))) {
+			ball_simulation = false;
+			if (get_scene(&scene)->game_start_time + get_scene(&scene)->win_time <= glutGet(GLUT_ELAPSED_TIME) / 1000) {
+				win_game  = true;
+			}
+			else {
+				lose_game=true;
+			}
+			set_last_ball_index(get_scene(&scene), -1);
+		}
 	}
 	
-	check_game_finished(get_scene(&scene), get_camera_position(&camera));
+	change_lighting_during_game(get_scene(&scene));
+	
+	
 	
     glutPostRedisplay();
 }
