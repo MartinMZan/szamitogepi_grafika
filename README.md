@@ -79,8 +79,6 @@ D	- jobbra sétálás
 	
 "-"	- fényerő le
 	
-t	- textúra előnézet
-	
 u	- felhasználói útmutató
 	
 b	- labda szimuláció indítása
